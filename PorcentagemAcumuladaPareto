@@ -1,0 +1,34 @@
+Porcentagem Acumulada Pareto =
+// RETORNA O VALOR PORCENTUAL ACUMULADO
+
+VAR _Vendas_atual = [Vendas]    // Valor atual da medida [VENDAS]
+
+VAR _Total_vendas =
+CALCULATE(                      // Calcula
+    [Vendas],                   // Valor de vendas de
+    ALLSELECTED(tabelaFato)     // tudo selecionado na tabela TABELAFATO
+)
+
+VAR _Tabela =
+SUMMARIZE(                      // Sumariza um tabela com:
+    ALLSELECTED(tabelaFato)     // tudo selecionado na tabela TABELAFATO
+    ,tabelaFato[Categoria]      // agrupando pelo Categoria
+    ,"@Vendas",[Vendas]         // retornando o valor de [VENDAS]
+)
+
+VAR _Filtro =
+FILTER(                         // Criar uma tabela filtrada a partir de:
+    _Tabela,                    // Tabela sumarizada
+    [Vendas] >= _Vendas_atual   // filtrando vendas maiores que a atual
+)
+
+VAR _Acumulado =
+IF( [Vendas] > 0,               // Se a medida [VENDAS] for maior que zero
+    SUMX(                       // Soma iterante
+        _Filtro,                // Na tabela filtrada
+        [@Vendas]               // coluna de [@VENDAS] 
+    )
+)
+
+RETURN
+DIVIDE(_Acumulado,_Vendas_atual)
