@@ -1,0 +1,33 @@
+dCalendario = 
+// Variáveis para ano inicial e final do calendário
+VAR _Ano_inicial =
+    YEAR( MIN( tabelaFato[DataAnalisada]) )
+VAR _Ano_final   =
+    YEAR( MAX( tabelaFato[DataAnalisada]) )
+
+// Definição da tabela dimensão calendário
+VAR _dCalendario =
+    ADDCOLUMNS(
+        // Adiciona calendário com 01 coluna automática chamada [Date]
+    	CALENDAR(
+            "01/01/" & _Ano_inicial,
+            "31/12/" & _Ano_final
+        ),
+
+        // Adiciona colunas relevantes para a análise
+
+        "Ano",                 YEAR([Date]),
+        "Mês",                 MONTH([Date]),
+        "Dia",                 DAY([Date]),
+        "Mês abrev",           FORMAT([Date],"mmm"),
+        "Ano/Mês",             FORMAT([Date],"yyyy/mm"),
+        "Semana",              FORMAT([Date], "ww"),
+        "Dia da semana",       FORMAT([Date],"ddd"),
+        "Dia da semana (num)", WEEKDAY([Date]),
+        "Trimestre",           FORMAT([Date], "Tq"),
+        "Bimestre",            "B" & CEILING( MONTH([Date])/2,1),
+        "Semestre",            "S" & CEILING( MONTH([Date])/6,1)
+    )
+
+RETURN
+_dCalendario
