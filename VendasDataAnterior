@@ -1,0 +1,30 @@
+// Alternativa para retornar o valor de medida
+// na data anterior não sequencial.
+
+Vendas na data anterior = 
+VAR _Data_atual =
+    SELECTEDVALUE(tabelaFato[Data])              // Determina a data da célula ou visual
+
+VAR _Tabela_datas_anteriores =
+    FILTER(                                      // Cria uma tabela filtrada a partir de
+        ALL(tabelaFato[Data]),                   // tabela que contém as datas não-sequenciais
+        tabelaFato[Data] < _Data_atual           // com datas menores que a data atual
+    )
+
+VAR _Data_anterior = 
+    MAXX(                                       // Calcula o valor máximo da
+        _Tabela_datas_anteriores,               // tabela que contém todos os valores menores que o atual
+        tabelaFato[Data]                        // e retorna a maior data menor que a atual,
+    )                                           // ou seja, a data anterior não-sequencial
+
+VAR _Venda_anterior = 
+    CALCULATE(                                   // Calcula
+        [Vendas],                                // o valor da medida
+        FILTER(                                  // filtrando
+            ALL(tabelaFato[Data]),               // na tabela de vendas
+            tabelaFato[Data] = _Data_anterior    // quando a data for igual à data anterior não-sequencial
+        )
+    )
+
+RETURN
+_Venda_anterior                             // Retorna o valor da medida na data anterior
